@@ -2,15 +2,16 @@ package main
 
 import "fmt"
 
+var k, c, t int
+
 func main() {
-	var k, c, t int
 	fmt.Println("введите кол-во произнесенных чисел")
-	fmt.Scan(&k)
+	k := vvodsproverkoy()
 	t = 0
 	a := make([]int, k)
 	fmt.Println("введите последовательность поддтягиваний")
 	for index := range a {
-		fmt.Scan(&a[index])
+		a[index] = vvodsproverkoy()
 	}
 	for index := range a {
 
@@ -32,9 +33,7 @@ func main() {
 			}
 			if a[i+1] != 1 {
 				t = t + 1
-
 			}
-
 		}
 	}
 	b[c-1] = a[k-1]
@@ -42,4 +41,19 @@ func main() {
 		fmt.Println(b[j])
 	}
 
+}
+func vvodsproverkoy() int {
+	var value int
+	fmt.Scan(&value)
+	for {
+		if value <= 0 {
+			fmt.Println("число отрицательное или равно 0,попробуйте ввести заново")
+			fmt.Scan(&value)
+		}
+		if value > 0 {
+			break
+		}
+
+	}
+	return value
 }
