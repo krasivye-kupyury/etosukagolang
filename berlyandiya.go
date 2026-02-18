@@ -3,13 +3,15 @@ package main
 import (
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 func main() {
-	var n, maxsvz, progres, kolsvz, energi, k, ii int
-	var all, s, char string
+	var n, maxsvz, progres, kolsvz, energi, k, ii, v, min int
+	var all, s, char, ss string
 	var t = false
 	energi = 0
+	min = 1000
 	fmt.Println("введите количество жителей")
 	fmt.Scan(&n)
 	e := make([]int, n)
@@ -43,12 +45,10 @@ func main() {
 			if col == 0 {
 				fmt.Println("введите первого человека ")
 				fmt.Scan(&svz[row][col])
-				all += strconv.Itoa(svz[row][col])
 			}
 			if col == 1 {
 				fmt.Println("введите его знакомого")
 				fmt.Scan(&svz[row][col])
-				all += strconv.Itoa(svz[row][col])
 			}
 		}
 	}
@@ -79,11 +79,10 @@ func main() {
 	s = strconv.Itoa(k)
 	ii = 0
 	for {
-		for m := 1; m <= maxsvz; m++ {
+		for m := 1; m <= n*n; m++ {
 			for row := 0; row < kolsvz; row++ {
 				if k == svz[row][0] {
 					s += strconv.Itoa(svz[row][1])
-
 				}
 			}
 			for row := 0; row < kolsvz; row++ {
@@ -92,12 +91,61 @@ func main() {
 				}
 			}
 			ii += 1
+			//fmt.Println("do char")
 			char = string([]rune(s)[ii])
+			//fmt.Println("posle char")
 			k, _ = strconv.Atoi(char)
 		}
-		break
+		ss = s
+		runes := []rune(ss)
+		seen := make(map[rune]bool)
+		result := make([]rune, 0)
+		for _, r := range runes {
+			if !seen[r] {
+				seen[r] = true
+				result = append(result, r)
+			}
+		}
+		s = string(result)
+		all += s
+		fmt.Println(s)
+		for i := 0; i < len(s); i++ {
+			char = string([]rune(s)[i])
+			k, _ = strconv.Atoi(char)
+			k = k - 1
+			if min > e[k] {
+				min = e[k]
+
+			}
+		}
+		fmt.Println("min e ", min)
+		energi = energi + min
+		for row := 0; row < kolsvz; row++ {
+			for col := 0; col < 2; col++ {
+				v = svz[row][col]
+				char = strconv.Itoa(v)
+				t = strings.Contains(all, char)
+				if t == false {
+					k = v
+					fmt.Println("eto k ", k)
+					break
+				}
+				if t == false {
+					break
+				}
+			}
+			if t == false {
+				break
+			}
+		}
+		ii = 0
+		fmt.Println("eto t ", t)
+		s = strconv.Itoa(k)
+		min = 1000
+		if t == true {
+			break
+		}
 	}
-	fmt.Println(s)
-	//fmt.Println(all)
+	fmt.Println("eto energi ", energi)
 
 }
