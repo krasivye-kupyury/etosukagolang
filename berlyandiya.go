@@ -2,19 +2,20 @@ package main
 
 import (
 	"fmt"
-	"strconv"
-	"strings"
 )
 
 func main() {
-	var n, maxsvz, progres, kolsvz, energi, k, ii, v, min int
-	var all, s, char, ss string
+	var n, maxsvz, progres, kolsvz, energi, k, ii, v, min, c int
+	var char int
 	var t = false
 	energi = 0
+	c = 0
 	min = 1000
 	fmt.Println("введите количество жителей")
 	fmt.Scan(&n)
 	e := make([]int, n)
+	a := make([]int, n*n)
+	b := make([]int, n*n)
 	fmt.Println("введите энергию для каждого жителя")
 	for i := range e {
 		fmt.Scan(&e[i])
@@ -66,86 +67,91 @@ func main() {
 					t = true
 				}
 			}
-
 		}
 		if t == false {
 			energi = e[m-1] + energi
 		}
 		t = false
-
 	}
 	fmt.Println("энергия, чтобы позвать людей, которых нет в связях =", energi)
 	k = svz[0][0]
-	s = strconv.Itoa(k)
+	a[0] = k
 	ii = 0
 	for {
-		for m := 1; m <= n*n; m++ {
+		for m := 1; m < n*n; m++ {
 			for row := 0; row < kolsvz; row++ {
 				if k == svz[row][0] {
-					s += strconv.Itoa(svz[row][1])
+					a[m] = svz[row][1]
+					m = m + 1
+					if m == n*n {
+						break
+					}
 				}
 			}
 			for row := 0; row < kolsvz; row++ {
 				if k == svz[row][1] {
-					s += strconv.Itoa(svz[row][0])
+					a[m] = svz[row][0]
+					m = m + 1
+					if m == n*n {
+						break
+					}
 				}
 			}
+			m = m - 1
 			ii += 1
-			//fmt.Println("do char")
-			char = string([]rune(s)[ii])
-			//fmt.Println("posle char")
-			k, _ = strconv.Atoi(char)
+			char = a[ii]
+			k = char
 		}
-		ss = s
-		runes := []rune(ss)
-		seen := make(map[rune]bool)
-		result := make([]rune, 0)
-		for _, r := range runes {
-			if !seen[r] {
-				seen[r] = true
-				result = append(result, r)
-			}
+		seen := make(map[int]bool)
+		result := make([]int, 0)
+		for _, num := range a {
+			seen[num] = true
 		}
-		s = string(result)
-		all += s
-		fmt.Println(s)
-		for i := 0; i < len(s); i++ {
-			char = string([]rune(s)[i])
-			k, _ = strconv.Atoi(char)
+		for num := range seen {
+			result = append(result, num)
+		}
+		b = append(b, result...)
+		for i := 0; i < len(result); i++ {
+			char = result[i]
+			k = char
 			k = k - 1
 			if min > e[k] {
 				min = e[k]
-
 			}
 		}
-		fmt.Println("min e ", min)
+		fmt.Println("минимум энергии для группы", min)
 		energi = energi + min
 		for row := 0; row < kolsvz; row++ {
 			for col := 0; col < 2; col++ {
 				v = svz[row][col]
-				char = strconv.Itoa(v)
-				t = strings.Contains(all, char)
-				if t == false {
-					k = v
-					fmt.Println("eto k ", k)
-					break
+				char = v
+				for iiii := 0; iiii < len(b); iiii++ {
+					if char != b[iiii] {
+						c = c + 1
+					}
+					if char == b[iiii] {
+						c = 0
+						break
+					}
 				}
-				if t == false {
+				if c == len(b) {
+					k = v
 					break
 				}
 			}
-			if t == false {
+			if c == len(b) {
 				break
 			}
 		}
 		ii = 0
-		fmt.Println("eto t ", t)
-		s = strconv.Itoa(k)
+		for mm := range a {
+			a[mm] = 0
+		}
+		a[0] = k
 		min = 1000
-		if t == true {
+		if c == 0 {
 			break
 		}
 	}
-	fmt.Println("eto energi ", energi)
-
+	fmt.Println("минимум энергии чтобы позвать всех ", energi)
 }
