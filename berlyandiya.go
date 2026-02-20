@@ -11,15 +11,37 @@ func main() {
 	energi = 0
 	c = 0
 	min = 1000
-	fmt.Println("введите количество жителей")
-	fmt.Scan(&n)
+	for {
+		fmt.Println("введите количество жителей")
+		fmt.Scan(&n)
+		n, t = proverka(n, t)
+		if t == true {
+			break
+		}
+	}
 	e := make([]int, n)
 	a := make([]int, n*n)
 	b := make([]int, n*n)
-	fmt.Println("введите энергию для каждого жителя")
-	for i := range e {
-		fmt.Scan(&e[i])
+	t = false
+	for {
+		fmt.Println("введите энергию для каждого жителя")
+		for i := 0; i < len(e); i++ {
+			fmt.Scan(&e[i])
+			e[i], t = proverka(e[i], t)
+			if t == false {
+				if i == 0 {
+					i = i - 1
+				}
+				if i > 0 {
+					i = i - 1
+				}
+			}
+		}
+		if t == true {
+			break
+		}
 	}
+	t = false
 	for i := range e {
 		fmt.Print(" ", i, " ")
 	}
@@ -28,13 +50,20 @@ func main() {
 		fmt.Print(" ", e[i], " ")
 	}
 	fmt.Println()
-	fmt.Println("введите количество связей")
 	for i := 1; i <= n-1; i++ {
 		progres = progres + i
 	}
 	maxsvz = (n * n) - n - progres
 	fmt.Println("максимум связей может быть ", maxsvz)
-	fmt.Scan(&kolsvz)
+	for {
+		fmt.Println("введите количество связей")
+		fmt.Scan(&kolsvz)
+		kolsvz, t = proverka(kolsvz, t)
+		if t == true {
+			break
+		}
+	}
+	t = false
 	fmt.Println(kolsvz)
 	fmt.Println("введите связи")
 	svz := make([][]int, kolsvz)
@@ -154,4 +183,13 @@ func main() {
 		}
 	}
 	fmt.Println("минимум энергии чтобы позвать всех ", energi)
+}
+func proverka(u int, r bool) (int, bool) {
+	if u == 0 || u < 0 {
+		fmt.Println("число либо равно 0, либо отрицательное.ошибка")
+		r = false
+	} else {
+		r = true
+	}
+	return u, r
 }
