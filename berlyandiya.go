@@ -5,16 +5,17 @@ import (
 )
 
 func main() {
-	var n, maxsvz, progres, kolsvz, energi, k, ii, v, min, c int
+	var n, maxsvz, progres, kolsvz, energi, k, ii, v, min, c, aa, bb, kk int
 	var char int
 	var t = false
 	energi = 0
+	kk = 0
 	c = 0
 	min = 1000
 	for {
 		fmt.Println("введите количество жителей")
 		fmt.Scan(&n)
-		n, t = proverka(n, t)
+		n, t = proverkaa(n, t)
 		if t == true {
 			break
 		}
@@ -27,7 +28,7 @@ func main() {
 		fmt.Println("введите энергию для каждого жителя")
 		for i := 0; i < len(e); i++ {
 			fmt.Scan(&e[i])
-			e[i], t = proverka(e[i], t)
+			e[i], t = proverkaa(e[i], t)
 			if t == false {
 				if i == 0 {
 					i = i - 1
@@ -42,10 +43,12 @@ func main() {
 		}
 	}
 	t = false
+	fmt.Print("индекс   ")
 	for i := range e {
 		fmt.Print(" ", i, " ")
 	}
 	fmt.Println()
+	fmt.Print("энергия  ")
 	for i := range e {
 		fmt.Print(" ", e[i], " ")
 	}
@@ -58,7 +61,11 @@ func main() {
 	for {
 		fmt.Println("введите количество связей")
 		fmt.Scan(&kolsvz)
-		kolsvz, t = proverka(kolsvz, t)
+		kolsvz, t = proverkaa(kolsvz, t)
+		if kolsvz > maxsvz {
+			fmt.Println("количесвто связей больше нормы")
+			t = false
+		}
 		if t == true {
 			break
 		}
@@ -75,13 +82,60 @@ func main() {
 			if col == 0 {
 				fmt.Println("введите первого человека ")
 				fmt.Scan(&svz[row][col])
+				if svz[row][col] == 0 || svz[row][col] < 0 || svz[row][col] > n {
+					fmt.Println("ошибка, число должно быть в диапозоне от 1 до количества жителей")
+					col = col - 1
+				}
 			}
 			if col == 1 {
 				fmt.Println("введите его знакомого")
 				fmt.Scan(&svz[row][col])
+				if svz[row][col] == 0 || svz[row][col] < 0 || svz[row][col] > n {
+					fmt.Println("ошибка, число должно быть в диапозоне от 1 до количества жителей")
+					col = col - 1
+				}
+
+			}
+			if col > 0 {
+				if svz[row][0] == svz[row][1] {
+					fmt.Println("ошибка, числа равны")
+					col = col - 1
+				}
 			}
 		}
+		aa = svz[row][0]
+		bb = svz[row][1]
+		t = false
+		kk = 0
+		for roww := 0; roww < kolsvz; roww++ {
+			for coll := 0; coll < 2; coll++ {
+				if aa == svz[roww][1] && bb == svz[roww][0] {
+					fmt.Println("ошибка, пары зеркальны")
+					svz[row][1] = -1
+					t = true
+					break
+				}
+				if aa == svz[roww][0] && bb == svz[roww][1] {
+					kk = kk + 1
+				}
+				if kk > 2 {
+					fmt.Println("ошибка, пары одинаковые")
+					svz[row][1] = 0
+					t = true
+					break
+				}
+
+			}
+			if t == true {
+				break
+			}
+		}
+		if t == true {
+			row = row - 1
+
+		}
 	}
+	t = false
 	fmt.Println("человек  :  пара")
 	for row := 0; row < kolsvz; row++ {
 		for col := 0; col < 2; col++ {
@@ -119,11 +173,11 @@ func main() {
 			}
 			for row := 0; row < kolsvz; row++ {
 				if k == svz[row][1] {
-					a[m] = svz[row][0]
-					m = m + 1
 					if m == n*n {
 						break
 					}
+					a[m] = svz[row][0]
+					m = m + 1
 				}
 			}
 			m = m - 1
@@ -184,7 +238,7 @@ func main() {
 	}
 	fmt.Println("минимум энергии чтобы позвать всех ", energi)
 }
-func proverka(u int, r bool) (int, bool) {
+func proverkaa(u int, r bool) (int, bool) {
 	if u == 0 || u < 0 {
 		fmt.Println("число либо равно 0, либо отрицательное.ошибка")
 		r = false
